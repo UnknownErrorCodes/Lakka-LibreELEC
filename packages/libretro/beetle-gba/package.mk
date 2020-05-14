@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="beetle-gba"
-PKG_VERSION="b953b74"
+PKG_VERSION="654ded0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-gba-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

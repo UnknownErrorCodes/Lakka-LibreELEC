@@ -19,23 +19,23 @@
 ################################################################################
 
 PKG_NAME="vice"
-PKG_VERSION="ce4524d"
+PKG_VERSION="086731e"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/vice-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Versatile Commodore 8-bit Emulator version 3.0"
 PKG_LONGDESC="Versatile Commodore 8-bit Emulator version 3.0"
+PKG_BUILD_FLAGS="-lto"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
-  strip_lto
   if [ "$ARCH" == "arm" ]; then
     CFLAGS="$CFLAGS -DARM -DALIGN_DWORD -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -marm"
   fi

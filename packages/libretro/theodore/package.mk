@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="theodore"
-PKG_VERSION="9cf6f92"
+PKG_VERSION="76cca76"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/Zlika/theodore"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

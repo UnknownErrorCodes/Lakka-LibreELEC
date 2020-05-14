@@ -111,7 +111,7 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  $SED "s:\(['=\" ]\)/usr:\\1$SYSROOT_PREFIX/usr:g" $SYSROOT_PREFIX/usr/bin/sdl-config
+  sed "s:\(['=\" ]\)/usr:\\1$SYSROOT_PREFIX/usr:g" $SYSROOT_PREFIX/usr/bin/sdl-config
 
   rm -rf $INSTALL/usr/bin
 }

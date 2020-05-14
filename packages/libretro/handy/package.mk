@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="handy"
-PKG_VERSION="08cc633"
+PKG_VERSION="6b19a4f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Zlib"
 PKG_SITE="https://github.com/libretro/libretro-handy"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

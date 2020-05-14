@@ -19,10 +19,10 @@
 ################################################################################
 
 PKG_NAME="reminiscence"
-PKG_VERSION="01528e5"
+PKG_VERSION="ac2e543"
 PKG_ARCH="any"
 PKG_SITE="https://github.com/libretro/REminiscence"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

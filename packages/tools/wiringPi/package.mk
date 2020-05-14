@@ -30,6 +30,7 @@ PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="GPIO Interface library for the Raspberry Pi"
 PKG_LONGDESC="GPIO Interface library for the Raspberry Pi"
+PKG_TOOLCHAIN="manual"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"

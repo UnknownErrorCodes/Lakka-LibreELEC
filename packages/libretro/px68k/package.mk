@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="px68k"
-PKG_VERSION="4e6990e"
+PKG_VERSION="85d59f0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Unknown"
 PKG_SITE="https://github.com/libretro/px68k-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

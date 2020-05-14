@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="uzem"
-PKG_VERSION="598cd0b"
+PKG_VERSION="2b4b9b1"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/libretro-uzem"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_PATCH_DIRS="libretro"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"

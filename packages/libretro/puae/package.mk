@@ -18,24 +18,30 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
+<<<<<<<< HEAD:packages/libretro/puae/package.mk
 PKG_NAME="puae"
-PKG_VERSION="a739e45"
+PKG_VERSION="943e1f2"
 PKG_REV="1"
 PKG_ARCH="arm i386 x86_64"
+========
+PKG_NAME="atk"
+PKG_VERSION="2.20.0"
+PKG_ARCH="any"
+>>>>>>>> lakka-master:packages/addons/addon-depends/atk/package.mk
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/libretro-uae"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
 PKG_LONGDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
+PKG_BUILD_FLAGS="-lto"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 pre_configure_target() {
-  strip_lto
   if [ "$ARCH" == "arm" ]; then
     CFLAGS="$CFLAGS -DARM -marm"
   fi

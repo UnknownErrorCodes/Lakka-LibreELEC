@@ -1,104 +1,97 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpeg"
-# Current branch is: release/3.1-xbmc
-PKG_VERSION="9702d0d"
-PKG_ARCH="any"
+# Current branch is: release/4.0-kodi
+PKG_VERSION="4.0.4-Leia-18.4"
+PKG_SHA256="e11e7594af35f36ab2711252c3d6bb106908f26605498aef4a9be2d7bc001db2"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
 PKG_URL="https://github.com/xbmc/FFmpeg/archive/${PKG_VERSION}.tar.gz"
-PKG_SOURCE_DIR="FFmpeg-${PKG_VERSION}*"
-PKG_DEPENDS_TARGET="toolchain yasm:host zlib bzip2 openssl speex"
-PKG_SECTION="multimedia"
-PKG_SHORTDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
+PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex"
 PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
-
-PKG_IS_ADDON="no"
-PKG_AUTORECONF="no"
+PKG_BUILD_FLAGS="-gold"
 
 # Dependencies
 get_graphicdrivers
 
-if [ "$VAAPI_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libva-intel-driver"
-  FFMPEG_VAAPI="--enable-vaapi"
+if [ "$DISTRO" = "Lakka" ]; then
+  VAAPI_SUPPORT=no
+fi
+
+if [ "$V4L2_SUPPORT" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libdrm"
+  PKG_FFMPEG_V4L2="--enable-v4l2_m2m --enable-libdrm"
 else
-  FFMPEG_VAAPI="--disable-vaapi"
+  PKG_FFMPEG_V4L2="--disable-v4l2_m2m"
+fi
+
+if [ "$VAAPI_SUPPORT" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libva"
+  PKG_FFMPEG_VAAPI="--enable-vaapi"
+else
+  PKG_FFMPEG_VAAPI="--disable-vaapi"
 fi
 
 if [ "$VDPAU_SUPPORT" = "yes" -a "$DISPLAYSERVER" = "x11" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libvdpau"
-  FFMPEG_VDPAU="--enable-vdpau"
+  PKG_FFMPEG_VDPAU="--enable-vdpau"
 else
-  FFMPEG_VDPAU="--disable-vdpau"
+  PKG_FFMPEG_VDPAU="--disable-vdpau"
 fi
 
 if [ "$PROJECT" = "Rockchip" ]; then
+  PKG_PATCH_DIRS+=" rkmpp"
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET rkmpp"
-  FFMPEG_RKMPP="--enable-rkmpp"
+  PKG_FFMPEG_RKMPP="--enable-rkmpp --enable-libdrm --enable-version3"
 else
-  FFMPEG_RKMPP="--disable-rkmpp"
+  PKG_FFMPEG_RKMPP="--disable-rkmpp"
 fi
 
-if [ "$DEBUG" = "yes" ]; then
-  FFMPEG_DEBUG="--enable-debug --disable-stripping"
-else
-  FFMPEG_DEBUG="--disable-debug --enable-stripping"
+if [ "$PROJECT" = "Allwinner" ]; then
+  PKG_PATCH_DIRS+=" v4l2-request-api"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libdrm systemd" # systemd is needed for libudev
+  PKG_FFMPEG_V4L2_REQUEST="--enable-v4l2-request --enable-libudev --enable-libdrm"
 fi
 
-if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
+if build_with_debug; then
+  PKG_FFMPEG_DEBUG="--enable-debug --disable-stripping"
+else
+  PKG_FFMPEG_DEBUG="--disable-debug --enable-stripping"
+fi
+
+if [ "$PROJECT" = "RPi" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
+  if [ "$DEVICE" = "RPi4" ]; then
+   PKG_PATCH_DIRS+=" rpi4-hevc"
+  else
+   PKG_PATCH_DIRS+=" rpi-hevc"
+ fi
 fi
 
-case "$TARGET_ARCH" in
-  arm)
-    FFMPEG_TABLES="--enable-hardcoded-tables"
-    ;;
-  *)
-    FFMPEG_TABLES="--disable-hardcoded-tables"
-    ;;
-esac
-
-if echo "$TARGET_FPU" | grep -q '^neon' || [[ "$TARGET_ARCH" = "aarch64" ]]; then
-  FFMPEG_FPU="--enable-neon"
+if target_has_feature neon; then
+  PKG_FFMPEG_FPU="--enable-neon"
 else
-  FFMPEG_FPU="--disable-neon"
+  PKG_FFMPEG_FPU="--disable-neon"
 fi
 
-if [ "$DISPLAYSERVER" = "x11" ]; then
-  FFMPEG_X11GRAB="--enable-indev=x11grab_xcb"
+if [ "$TARGET_ARCH" = "x86_64" -o "$TARGET_ARCH" = "i386" ]; then
+  PKG_DEPENDS_TARGET+=" nasm:host"
+fi
+
+if target_has_feature "(neon|sse)"; then
+  PKG_DEPENDS_TARGET+=" dav1d"
+  PKG_FFMPEG_AV1="--enable-libdav1d"
 fi
 
 pre_configure_target() {
   cd $PKG_BUILD
   rm -rf .$TARGET_NAME
 
-# ffmpeg fails building for x86_64 with LTO support
-  strip_lto
-
-# ffmpeg fails running with GOLD support
-  strip_gold
-
-
-  if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-    CFLAGS="-I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux -DRPI=1 $CFLAGS"
-    FFMPEG_LIBS="-lbcm_host -lvcos -lvchiq_arm -lmmal -lmmal_core -lmmal_util -lvcsm"
+  if [ "$PROJECT" = "RPi" ]; then
+    PKG_FFMPEG_LIBS="-lbcm_host -lvcos -lvchiq_arm -lmmal -lmmal_core -lmmal_util -lvcsm"
+    PKG_FFMPEG_RPI="--enable-rpi"
   fi
 }
 
@@ -119,10 +112,9 @@ configure_target() {
               --host-cc="$HOST_CC" \
               --host-cflags="$HOST_CFLAGS" \
               --host-ldflags="$HOST_LDFLAGS" \
-              --host-libs="-lm" \
               --extra-cflags="$CFLAGS" \
               --extra-ldflags="$LDFLAGS" \
-              --extra-libs="$FFMPEG_LIBS" \
+              --extra-libs="$PKG_FFMPEG_LIBS" \
               --disable-static \
               --enable-shared \
               --enable-gpl \
@@ -130,15 +122,12 @@ configure_target() {
               --enable-nonfree \
               --enable-logging \
               --disable-doc \
-              $FFMPEG_DEBUG \
+              $PKG_FFMPEG_DEBUG \
               --enable-pic \
               --pkg-config="$TOOLCHAIN/bin/pkg-config" \
               --enable-optimizations \
               --disable-extra-warnings \
-              --disable-ffprobe \
-              --disable-ffplay \
-              --disable-ffserver \
-              --enable-ffmpeg \
+              --disable-programs \
               --enable-avdevice \
               --enable-avcodec \
               --enable-avformat \
@@ -147,7 +136,6 @@ configure_target() {
               --enable-avfilter \
               --disable-devices \
               --enable-pthreads \
-              --disable-w32threads \
               --enable-network \
               --disable-gnutls --enable-openssl \
               --disable-gray \
@@ -158,20 +146,20 @@ configure_target() {
               --enable-mdct \
               --enable-rdft \
               --disable-crystalhd \
-              $FFMPEG_VAAPI \
-              $FFMPEG_VDPAU \
-              $FFMPEG_RKMPP \
-              --disable-dxva2 \
+              $PKG_FFMPEG_V4L2 \
+              $PKG_FFMPEG_VAAPI \
+              $PKG_FFMPEG_VDPAU \
+              $PKG_FFMPEG_RPI \
+              $PKG_FFMPEG_RKMPP \
+              $PKG_FFMPEG_V4L2_REQUEST \
               --enable-runtime-cpudetect \
-              $FFMPEG_TABLES \
-              --disable-memalign-hack \
+              --disable-hardcoded-tables \
               --disable-encoders \
               --enable-encoder=ac3 \
               --enable-encoder=aac \
               --enable-encoder=wmav2 \
               --enable-encoder=mjpeg \
               --enable-encoder=png \
-              --disable-decoder=mpeg_xvmc \
               --enable-hwaccels \
               --disable-muxers \
               --enable-muxer=spdif \
@@ -188,19 +176,20 @@ configure_target() {
               --enable-filters \
               --disable-avisynth \
               --enable-bzlib \
+              --disable-lzma \
+              --disable-alsa \
               --disable-frei0r \
               --disable-libopencore-amrnb \
               --disable-libopencore-amrwb \
               --disable-libopencv \
               --disable-libdc1394 \
-              --disable-libfaac \
               --disable-libfreetype \
               --disable-libgsm \
               --disable-libmp3lame \
-              --disable-libnut \
               --disable-libopenjpeg \
               --disable-librtmp \
-              --disable-libschroedinger \
+              $PKG_FFMPEG_AV1 \
+              --enable-libspeex \
               --disable-libtheora \
               --disable-libvo-amrwbenc \
               --disable-libvorbis \
@@ -211,10 +200,8 @@ configure_target() {
               --enable-zlib \
               --enable-asm \
               --disable-altivec \
-              $FFMPEG_FPU \
-              --enable-yasm \
-              --disable-symver \
-              $FFMPEG_X11GRAB
+              $PKG_FFMPEG_FPU \
+              --disable-symver
 }
 
 post_makeinstall_target() {

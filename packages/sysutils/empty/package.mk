@@ -16,9 +16,15 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+<<<<<<<< HEAD:packages/tools/imx6-mfgtool2-tbs-matrix/package.mk
+PKG_NAME="imx6-mfgtool2-tbs-matrix"
+PKG_VERSION="1.0"
+PKG_ARCH="arm"
+========
 PKG_NAME="empty"
 PKG_VERSION="0.6.20b"
 PKG_ARCH="any"
+>>>>>>>> lakka-master:packages/sysutils/empty/package.mk
 PKG_LICENSE="GPL"
 PKG_SITE="http://empty.sourceforge.net/"
 PKG_URL="http://downloads.sourceforge.net/sourceforge/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tgz"

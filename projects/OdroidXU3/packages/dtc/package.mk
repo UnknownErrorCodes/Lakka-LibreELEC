@@ -1,35 +1,40 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="dtc"
-PKG_VERSION="1.4.4"
-PKG_REV="1"
-PKG_ARCH="any"
+PKG_VERSION="1.6.0"
+PKG_SHA256="3d15dee7126a6c4a015ab47ec908cab13e39774b0315efaaebb223cb4a4d349c"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.devicetree.org/Device_Tree_Compiler"
-PKG_URL="https://www.kernel.org/pub/software/utils/dtc/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_HOST="ccache:host"
-PKG_PRIORITY="optional"
-PKG_SECTION="tools"
-PKG_SHORTDESC="Device Tree Compiler"
-PKG_LONGDESC="dtc: Device Tree Compiler"
+PKG_SITE="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/"
+PKG_URL="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/dtc-$PKG_VERSION.tar.gz"
+PKG_DEPENDS_HOST="Python2:host swig:host"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_LONGDESC="The Device Tree Compiler"
+
+PKG_MAKE_OPTS_HOST="dtc libfdt"
+PKG_MAKE_OPTS_TARGET="dtc fdtput fdtget libfdt"
 
 makeinstall_host() {
-  make install PREFIX=$TOOLCHAIN
+  mkdir -p $TOOLCHAIN/bin
+    cp -P $PKG_BUILD/dtc $TOOLCHAIN/bin
+    cp -P $PKG_BUILD/libfdt/libfdt-$PKG_VERSION.so $TOOLCHAIN/lib/libfdt.so
 }
 
+post_makeinstall_host() {
+  python ./pylibfdt/setup.py build_ext --inplace
+  exec_thread_safe python ./pylibfdt/setup.py install --prefix=$TOOLCHAIN
+}
+
+pre_make_target() {
+  make clean BIN=
+}
+
+makeinstall_target() {
+  mkdir -p $INSTALL/usr/bin
+    cp -P $PKG_BUILD/dtc $INSTALL/usr/bin
+    cp -P $PKG_BUILD/fdtput $INSTALL/usr/bin/
+    cp -P $PKG_BUILD/fdtget $INSTALL/usr/bin/
+  mkdir -p $INSTALL/usr/lib
+    cp -P $PKG_BUILD/libfdt/libfdt.so $INSTALL/usr/lib/
+}

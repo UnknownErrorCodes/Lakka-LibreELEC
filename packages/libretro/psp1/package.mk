@@ -30,13 +30,10 @@ PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Non-shallow fork of PPSSPP for libretro exclusively."
 PKG_LONGDESC="A fast and portable PSP emulator"
+PKG_BUILD_FLAGS="-lto"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-
-pre_configure_target() {
-  strip_lto
-}
 
 make_target() {
   cd $PKG_BUILD/libretro

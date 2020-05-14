@@ -17,15 +17,16 @@
 ################################################################################
 
 PKG_NAME="mame2014"
-PKG_VERSION="80a2e82"
+PKG_VERSION="d43c94f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mame2014-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Late 2014 version of MAME (0.159-ish) for libretro and MAME 0.159 romsets"
+PKG_BUILD_FLAGS="-lto"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
@@ -34,15 +35,14 @@ pre_make_target() {
   export REALCC=$CC
   export CC=$CXX
   export LD=$CXX
-  strip_lto
 }
 
 make_target() {
-  case $PROJECT in
-    RPi|Slice)
+  case ${DEVICE:-$PROJECT} in
+    RPi)
       make platform=armv6-hardfloat-arm1176jzf-s
       ;;
-    RPi2|Slice3)
+    RPi2)
       make platform=armv7-neon-hardfloat-cortex-a7
       ;;
     imx6)

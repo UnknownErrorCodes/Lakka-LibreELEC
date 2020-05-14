@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="tyrquake"
-PKG_VERSION="9ab2b7a"
+PKG_VERSION="28cd29b"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/tyrquake"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

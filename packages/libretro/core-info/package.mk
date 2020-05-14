@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="core-info"
-PKG_VERSION="c25bc45"
+PKG_VERSION="b599736"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/libretro-super"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -41,5 +41,6 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
   cp dist/info/*.info $INSTALL/usr/lib/libretro/
+  cp $PKG_DIR/files/*.info $INSTALL/usr/lib/libretro/
 }
 

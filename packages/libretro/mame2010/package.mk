@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="mame2010"
-PKG_VERSION="c87309d"
+PKG_VERSION="1a9221d"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/libretro/mame2010-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

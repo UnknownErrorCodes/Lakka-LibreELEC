@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="snes9x2005"
-PKG_VERSION="c9b3980"
+PKG_VERSION="0ed20f0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/snes9x2005"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="quicknes"
-PKG_VERSION="a7c05b7"
+PKG_VERSION="2cb3bec"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://github.com/libretro/QuickNES_Core"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

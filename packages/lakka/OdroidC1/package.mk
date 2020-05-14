@@ -18,14 +18,19 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
+<<<<<<<< HEAD:packages/lakka/OdroidC1/package.mk
 PKG_NAME="OdroidC1"
 PKG_VERSION=""
 PKG_REV="1"
+========
+PKG_NAME="libXcursor"
+PKG_VERSION="1.1.14"
+>>>>>>>> lakka-master:packages/addons/addon-depends/libXcursor/package.mk
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/lakkatv/Lakka"
 PKG_URL=""
-PKG_DEPENDS_TARGET="retroarch $LIBRETRO_CORES"
+PKG_DEPENDS_TARGET="retroarch"
 PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="Lakka metapackage for OdroidC1"

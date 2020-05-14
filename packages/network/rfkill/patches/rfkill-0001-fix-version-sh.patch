@@ -1,6 +1,6 @@
-diff -Naur rfkill-0.5/version.sh rfkill-0.5.patch/version.sh
---- rfkill-0.5/version.sh	2013-05-03 13:24:22.000000000 +0200
-+++ rfkill-0.5.patch/version.sh	2017-06-18 13:49:25.213952121 +0200
+diff -Naur a/version.sh b/version.sh
+--- a/version.sh
++++ b/version.sh
 @@ -12,19 +12,6 @@
  
  if test "x$SUFFIX" != 'x'; then

@@ -19,33 +19,37 @@
 ################################################################################
 
 PKG_NAME="pcsx_rearmed"
-PKG_VERSION="7375bf9"
+PKG_VERSION="915cd7d"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/pcsx_rearmed_switch"
-PKG_GIT_URL="$PKG_SITE"
+PKG_SITE="https://github.com/libretro/pcsx_rearmed"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="ARM optimized PCSX fork"
 PKG_LONGDESC="PCSX ReARMed is yet another PCSX fork based on the PCSX-Reloaded project, which itself contains code from PCSX, PCSX-df and PCSX-Revolution."
+PKG_BUILD_FLAGS="-gold"
+PKG_TOOLCHAIN="make"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-configure_target() {
-  strip_gold
-}
+if [ "$OPENGL_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGL"
+fi
+
+if [ "$OPENGLES_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGLES"
+fi
 
 make_target() {
   cd $PKG_BUILD
   if [[ "$TARGET_FPU" =~ "neon" ]]; then
     make -f Makefile.libretro HAVE_NEON=1 USE_DYNAREC=1 BUILTIN_GPU=neon
   elif [ "$ARCH" == "arm" ]; then
-    make -f Makefile.libretro HAVE_NEON=0 USE_DYNAREC=1
-  elif [ "$ARCH" == "aarch64" ]; then
-    make -f Makefile.libretro platform=arm64
+    make -f Makefile.libretro HAVE_NEON=0 USE_DYNAREC=1 BUILTIN_GPU=unai
   else
     make -f Makefile.libretro
   fi

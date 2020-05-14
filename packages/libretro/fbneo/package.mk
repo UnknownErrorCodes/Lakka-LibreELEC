@@ -19,23 +19,32 @@
 ################################################################################
 
 PKG_NAME="fbneo"
-PKG_VERSION="06f6f81"
+PKG_VERSION="a28d26f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/fbneo"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Port of Final Burn Neo to Libretro"
 PKG_LONGDESC="Currently, FB Neo supports games on Capcom CPS-1 and CPS-2 hardware, SNK Neo-Geo hardware, Toaplan hardware, Cave hardware, and various games on miscellaneous hardware. "
+PKG_TOOLCHAIN="manual"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
-  make -C src/burner/libretro CC=$CC CXX=$CXX profile=accuracy
+  if [ "$ARCH" == "arm" ]; then
+    if [[ "$TARGET_FPU" =~ "neon" ]]; then
+      make -C src/burner/libretro CC=$CC CXX=$CXX HAVE_NEON=1 profile=performance
+    else
+      make -C src/burner/libretro CC=$CC CXX=$CXX profile=performance
+    fi
+  else
+    make -C src/burner/libretro CC=$CC CXX=$CXX profile=accuracy
+  fi
 }
 
 makeinstall_target() {

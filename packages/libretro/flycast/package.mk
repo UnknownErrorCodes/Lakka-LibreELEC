@@ -19,28 +19,51 @@
 ################################################################################
 
 PKG_NAME="flycast"
-PKG_VERSION="4a020d4"
+PKG_VERSION="652e1af"
 PKG_REV="1"
-PKG_ARCH="arm i386 x86_64 aarch64"
+PKG_ARCH="arm aarch64 x86_64"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/flycast"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Flycast is a multiplatform Sega Dreamcast emulator"
 PKG_LONGDESC="Flycast is a multiplatform Sega Dreamcast emulator"
+PKG_BUILD_FLAGS="-lto"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$OPENGL_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGL"
+fi
+
+if [ "$OPENGLES_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGLES"
+fi
+
 make_target() {
-  if [ "$ARCH" == "arm" ]; then
-    make platform=rpi FORCE_GLES=1 HAVE_OPENMP=0
-  elif [ "$ARCH" == "aarch64" ]; then
-    make platform=arm64 HAVE_OPENMP=0 FORCE_GLES=0 GLES=0 HAVE_OIT=1
+  if [ "$OPENGL_SUPPORT" = yes ]; then
+    if [ "$ARCH" = "arm" ]; then
+      make HAVE_OPENMP=0 LDFLAGS=-lrt
+    else
+      make AS=${AS} CC_AS=${AS} ARCH=${ARCH} HAVE_OPENMP=0 LDFLAGS=-lrt
+    fi
   else
-    make AS=${AS} CC_AS=${AS} ARCH=${ARCH} HAVE_OPENMP=0
+    FLYCAST_GL=""
+    [ "$OPENGLES_SUPPORT" = yes ] && FLYCAST_GL="FORCE_GLES=1"
+    if [ "$ARCH" == "arm" ]; then
+      if [ "$DEVICE" = "RPi4" ]; then
+        make AS=${AS} CC_AS=${CC} platform=rpi4-gles-neon HAVE_OPENMP=0 LDFLAGS=-lrt
+      elif [ "$DEVICE" = "RPi2" ]; then
+        make AS=${AS} CC_AS=${CC} platform=rpi $FLYCAST_GL HAVE_OPENMP=0 LDFLAGS=-lrt
+      else
+        make AS=${AS} CC_AS=${CC} platform=armv-gles-neon $FLYCAST_GL HAVE_OPENMP=0 LDFLAGS=-lrt
+      fi
+    else
+      make AS=${AS} CC_AS=${AS} ARCH=${ARCH} $FLYCAST_GL HAVE_OPENMP=0 LDFLAGS=-lrt
+    fi
   fi
 }
 

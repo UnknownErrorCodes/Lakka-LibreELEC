@@ -2,6 +2,7 @@
 # setup system defaults
 ################################################################################
 
+<<<<<<< HEAD:projects/Generic_VK_nvidia/options
   # The TARGET_CPU variable controls which processor should be targeted for
   # generated code.
     case $TARGET_ARCH in
@@ -16,40 +17,35 @@
 
   # Bootloader to use (syslinux / u-boot)
     BOOTLOADER="syslinux"
+=======
+  # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
+    BOOTLOADER="u-boot"
+>>>>>>> lakka-master:projects/Allwinner/options
 
   # u-boot version to use (default)
     UBOOT_VERSION="default"
 
-  # Configuration for u-boot
-    UBOOT_CONFIG=""
-
-  # Target Configfile for u-boot
-    UBOOT_CONFIGFILE=""
-
-  # Kernel target
-    KERNEL_TARGET="bzImage"
-
-  # Kernel extra targets to build
-    KERNEL_UBOOT_EXTRA_TARGET=""
-
   # Additional kernel make parameters (for example to specify the u-boot loadaddress)
-    KERNEL_MAKE_EXTRACMD=""
+    KERNEL_MAKE_EXTRACMD="dtbs"
+
+  # Additional kernel dependencies
+    KERNEL_EXTRA_DEPENDS_TARGET="lz4:host"
 
   # Kernel to use. values can be:
   # default:  default mainline kernel
     LINUX="default"
 
+    EXTRA_CMDLINE="console=ttyS0,115200 console=tty1"
 
 ################################################################################
 # setup build defaults
 ################################################################################
 
   # Project CFLAGS
-    PROJECT_CFLAGS="-mmmx -msse -msse2 -mfpmath=sse"
+    PROJECT_CFLAGS=""
 
-  # SquashFS compression method (gzip / lzo / xz)
-    SQUASHFS_COMPRESSION="gzip"
-
+  # SquashFS compression method (gzip / lzo / xz / zstd)
+    SQUASHFS_COMPRESSION="zstd"
 
 ################################################################################
 # setup project defaults
@@ -62,24 +58,33 @@
     OPENGL="no"
 
   # OpenGL-ES implementation to use (no / bcm2835-driver / gpu-viv-bin-mx6q)
-    OPENGLES="no"
+    OPENGLES="libmali"
 
   # Vulkan implementation to use (no / nvidia-driver)
     VULKAN="nvidia-driver"
 
   # include uvesafb support (yes / no)
-    UVESAFB_SUPPORT="yes"
+    UVESAFB_SUPPORT="no"
 
   # Displayserver to use (x11 / no)
     DISPLAYSERVER="no"
 
+<<<<<<< HEAD:projects/Generic_VK_nvidia/options
   # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia,nouveau)
   # Space separated list is supported,
   # e.g. GRAPHIC_DRIVERS="i915 i965 r300 r600 radeonsi nvidia nouveau"
+=======
+  # Windowmanager to use (ratpoison / fluxbox / none)
+    WINDOWMANAGER="none"
+
+  # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia)
+  # Space separated list is supported,
+  # e.g. GRAPHIC_DRIVERS="i915 i965 r300 r600 radeonsi nvidia"
+>>>>>>> lakka-master:projects/Allwinner/options
     GRAPHIC_DRIVERS=""
 
   # KODI Player implementation to use (default / bcm2835-driver / libfslvpuwrap)
-    KODIPLAYER_DRIVER="default"
+    KODIPLAYER_DRIVER="$OPENGLES"
 
   # Modules to install in initramfs for early boot
     INITRAMFS_MODULES=""
@@ -87,6 +92,7 @@
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,
   # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
+<<<<<<< HEAD:projects/Generic_VK_nvidia/options
     FIRMWARE="misc-firmware wlan-firmware"
 
   # additional drivers to install:
@@ -105,3 +111,20 @@
     LIBRETRO_CORES="${LIBRETRO_CORES//reicast/}"
     LIBRETRO_CORES="${LIBRETRO_CORES//sameboy/}" # does not seem to build
     LIBRETRO_CORES="${LIBRETRO_CORES//yabause/}"
+=======
+    FIRMWARE="misc-firmware wlan-firmware dvb-firmware brcmfmac_sdio-firmware"
+
+    if [ "$DISTRO" = "Lakka" ]; then
+      FIRMWARE="misc-firmware wlan-firmware brcmfmac_sdio-firmware"
+    fi
+
+  # build and install CEC framework support (yes / no)
+    CEC_FRAMEWORK_SUPPORT="yes"
+
+  # build with installer (yes / no)
+    INSTALLER_SUPPORT="no"
+
+  # debug tty path
+    DEBUG_TTY="/dev/console"
+
+>>>>>>> lakka-master:projects/Allwinner/options

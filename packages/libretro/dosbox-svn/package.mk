@@ -18,26 +18,29 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
+<<<<<<<< HEAD:packages/libretro/dosbox-svn/package.mk
 PKG_NAME="dosbox-svn"
-PKG_VERSION="5f6a1c7"
+PKG_VERSION="07af328"
 PKG_REV="1"
+========
+PKG_NAME="gdk-pixbuf"
+PKG_VERSION="2.34.0"
+>>>>>>>> lakka-master:packages/addons/addon-depends/gdk-pixbuf/package.mk
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/dosbox-svn"
-PKG_GIT_URL="$PKG_SITE"
-PKG_GIT_BRANCH="libretro"
-PKG_DEPENDS_TARGET="toolchain SDL SDL_net"
+PKG_URL="$PKG_SITE.git"
+PKG_GIT_CLONE_BRANCH="libretro"
+PKG_DEPENDS_TARGET="toolchain SDL_net"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Upstream port of DOSBox to libretro"
 PKG_LONGDESC="Upstream port of DOSBox to libretro"
+PKG_BUILD_FLAGS="-lto"
+PKG_TOOLCHAIN="manual"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-
-pre_configure_target() {
-  strip_lto
-}
 
 make_target() {
   if [ "$ARCH" = "aarch64" ]; then

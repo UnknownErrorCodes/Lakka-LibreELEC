@@ -19,13 +19,13 @@
 ################################################################################
 
 PKG_NAME="retroarch"
-PKG_VERSION="ef5f448"
+PKG_VERSION="ea7e682"
 PKG_REV="11"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/RetroArch"
-PKG_GIT_URL="$PKG_SITE"
-PKG_DEPENDS_TARGET="toolchain alsa-lib freetype zlib retroarch-assets retroarch-overlays core-info retroarch-joypad-autoconfig lakka-update libretro-database ffmpeg libass libvdpau libxkbfile xkeyboard-config libxkbcommon joyutils sixpair empty"
+PKG_URL="$PKG_SITE.git"
+PKG_DEPENDS_TARGET="toolchain alsa-lib freetype zlib retroarch-assets retroarch-overlays core-info retroarch-joypad-autoconfig lakka-update libretro-database ffmpeg libass libvdpau libxkbfile xkeyboard-config libxkbcommon joyutils sixpair empty libretro-cores"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Reference frontend for the libretro API."
@@ -35,90 +35,94 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 if [ "$PROJECT" == "Generic_VK_nvidia" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET slang-shaders"
+  PKG_DEPENDS_TARGET+=" slang-shaders"
 else
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET glsl-shaders"
+  PKG_DEPENDS_TARGET+=" glsl-shaders"
 fi
 
 if [ "$OPENGLES_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $OPENGLES"
+  PKG_DEPENDS_TARGET+=" $OPENGLES"
 fi
 
-if [ "$OPENGL_SUPPORT" == yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $OPENGL"
+if [ "$OPENGL_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGL"
 fi
 
-if [ "$VULKAN_SUPPORT" == yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $VULKAN vulkan-loader slang-shaders"
+if [ "$VULKAN_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $VULKAN vulkan-loader"
 fi
 
 if [ "$SAMBA_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET samba"
+  PKG_DEPENDS_TARGET+=" samba"
 fi
 
 if [ "$AVAHI_DAEMON" = yes ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET avahi nss-mdns"
+  PKG_DEPENDS_TARGET+=" avahi nss-mdns"
 fi
 
-if [ "$PROJECT" = "Switch" ]; then
-   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET pulseaudio"
-fi
+RETROARCH_GL=""
 
 if [ "$VULKAN" == "nvidia-driver" ]; then
   RETROARCH_GL="--enable-vulkan --disable-x11 --disable-kms --disable-egl"
-elif [ "$PROJECT" == "Switch" ]; then
-  RETROARCH_GL="--disable-kms --enable-x11 --disable-wayland --disable-opengles --enable-opengl"
-elif [ "$OPENGLES" == "no" ]; then
+elif [ "$OPENGL_SUPPORT" == "yes" ]; then
   RETROARCH_GL="--enable-kms"
 elif [ "$OPENGLES" == "bcm2835-driver" ]; then
   RETROARCH_GL="--enable-opengles --disable-kms --disable-x11"
-  CFLAGS="$CFLAGS -I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads \
-                  -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux"
 elif [ "$OPENGLES" == "odroidc1-mali" ] || [ "$OPENGLES" == "opengl-meson" ] || [ "$OPENGLES" == "opengl-meson8" ] || [ "$OPENGLES" == "opengl-meson-t82x" ]; then
   RETROARCH_GL="--enable-opengles --disable-kms --disable-x11 --enable-mali_fbdev"
 elif [ "$OPENGLES" == "gpu-viv-bin-mx6q" ] || [ "$OPENGLES" == "imx-gpu-viv" ]; then
   RETROARCH_GL="--enable-opengles --disable-kms --disable-x11 --enable-vivante_fbdev"
-  CFLAGS="$CFLAGS -DLINUX -DEGL_API_FB"
-elif [ "$OPENGLES" == "mali-rockchip" ]; then
+elif [ "$OPENGLES" == "libmali" ]; then
   RETROARCH_GL="--enable-opengles --enable-kms --disable-x11 --disable-wayland"
 elif [ "$OPENGLES" == "allwinner-fb-mali" ]; then
    RETROARCH_GL="--enable-opengles --disable-kms --disable-x11 --enable-mali_fbdev"
 elif [ "$OPENGLES" == "allwinner-mali" ] || [ "$OPENGLES" == "odroidxu3-mali" ]; then
-   RETROARCH_GL="--enable-opengles --enable-kms --disable-x11"
+  RETROARCH_GL="--enable-opengles --enable-kms --disable-x11"
+elif [ "$OPENGLES" == "mesa" ]; then
+  if [ "$DEVICE" == "RPi4" ]; then
+    RETROARCH_GL="--enable-opengles --enable-opengles3 --enable-opengl_core --enable-kms --disable-x11 --disable-videocore --enable-plain_drm"
+  else
+    RETROARCH_GL="--enable-opengles --enable-kms --disable-x11"
+  fi
 fi
 
-if [ "$DEVICE" = "L4T" ]; then
-   RETROARCH_GL="$RETROARCH_GL --enable-vulkan --disable-egl --disable-vulkan_display"
-fi
+RETROARCH_NEON=""
 
 if [[ "$TARGET_FPU" =~ "neon" ]]; then
   RETROARCH_NEON="--enable-neon"
 fi
 
-TARGET_CONFIGURE_OPTS=""
 PKG_CONFIGURE_OPTS_TARGET="--disable-vg \
                            --disable-sdl \
+                           --disable-sdl2 \
                            --disable-ssl \
                            $RETROARCH_GL \
                            $RETROARCH_NEON \
                            --enable-zlib \
-                           --enable-freetype"
-              
-if [ "$PROJECT" = "Switch" ]; then
-   PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --enable-pulse"
-fi
-      
+                           --enable-freetype \
+                           --enable-translate \
+                           --enable-cdrom"
 
 pre_configure_target() {
+  TARGET_CONFIGURE_OPTS=""
   cd $PKG_BUILD
 }
 
-make_target() {
-  if [ "$PROJECT" = "Switch" ]; then
-    make V=1 HAVE_LAKKA=1 HAVE_LAKKA_SWITCH=1 HAVE_ZARCH=0
-  else
-    make V=1 HAVE_LAKKA=1 HAVE_ZARCH=0
+pre_make_target() {
+  if [ "$OPENGLES" == "bcm2835-driver" ]; then
+    CFLAGS+=" -I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads \
+              -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux"
+  elif [ "$OPENGLES" == "gpu-viv-bin-mx6q" ] || [ "$OPENGLES" == "imx-gpu-viv" ]; then
+    CFLAGS+=" -DLINUX -DEGL_API_FB"
   fi
+
+  if [ "$LAKKA_NIGHTLY" = yes ]; then
+    CFLAGS+=" -DHAVE_LAKKA_NIGHTLY"
+  fi
+}
+
+make_target() {
+  make V=1 HAVE_LAKKA=1 HAVE_ZARCH=0
   make -C gfx/video_filters compiler=$CC extra_flags="$CFLAGS"
   make -C libretro-common/audio/dsp_filters compiler=$CC extra_flags="$CFLAGS"
 }
@@ -143,12 +147,12 @@ makeinstall_target() {
   sed -i -e "s/# playlist_directory =/playlist_directory =\/storage\/playlists/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# savefile_directory =/savefile_directory =\/storage\/savefiles/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# savestate_directory =/savestate_directory =\/storage\/savestates/" $INSTALL/etc/retroarch.cfg
-  sed -i -e "s/# system_directory =/system_directory =\/storage\/system/" $INSTALL/etc/retroarch.cfg
+  sed -i -e "s/# system_directory =/system_directory =\/tmp\/system/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# screenshot_directory =/screenshot_directory =\/storage\/screenshots/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# video_shader_dir =/video_shader_dir =\/tmp\/shaders/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# rgui_show_start_screen = true/rgui_show_start_screen = false/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# assets_directory =/assets_directory =\/tmp\/assets/" $INSTALL/etc/retroarch.cfg
-  sed -i -e "s/# overlays_directory =/overlays_directory =\/tmp\/overlays/" $INSTALL/etc/retroarch.cfg
+  sed -i -e "s/# overlay_directory =/overlay_directory =\/tmp\/overlays/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# cheat_database_path =/cheat_database_path =\/tmp\/database\/cht/" $INSTALL/etc/retroarch.cfg
   sed -i -e "s/# menu_driver = \"rgui\"/menu_driver = \"xmb\"/" $INSTALL/etc/retroarch.cfg
 
@@ -174,10 +178,17 @@ makeinstall_target() {
   sed -i -e "s/# video_fullscreen = false/video_fullscreen = true/" $INSTALL/etc/retroarch.cfg
 
   # Audio
-  sed -i -e "s/# audio_driver =/audio_driver = \"alsathread\"/" $INSTALL/etc/retroarch.cfg
+  if [ "$DEVICE" = "RPi4" ]; then
+    sed -i -e "s/# audio_driver =/audio_driver = \"alsa\"/" $INSTALL/etc/retroarch.cfg
+  else
+    sed -i -e "s/# audio_driver =/audio_driver = \"alsathread\"/" $INSTALL/etc/retroarch.cfg
+  fi
   sed -i -e "s/# audio_filter_dir =/audio_filter_dir =\/usr\/share\/audio_filters/" $INSTALL/etc/retroarch.cfg
-  if [ "$PROJECT" == "OdroidXU3" ]; then # workaround the 55fps bug
+  if [ "$PROJECT" = "OdroidXU3" -o "$DEVICE" = "RPi4" ]; then # workaround the 55fps bug + fix no audio for RPi4
     sed -i -e "s/# audio_out_rate = 48000/audio_out_rate = 44100/" $INSTALL/etc/retroarch.cfg
+  fi
+  if [ "$DEVICE" = "RPi4" ]; then
+    sed -i -e "s/# audio_device =/audio_device = \"hw:0,1\"/" $INSTALL/etc/retroarch.cfg
   fi
 
   # Saving
@@ -220,7 +231,7 @@ makeinstall_target() {
   fi
 
   # Gamegirl
-  if [ "$PROJECT" == "Gamegirl" ]; then
+  if [ "$PROJECT" == "RPi" ] && [ "$DEVICE" == "Gamegirl" ]; then
     echo "xmb_theme = 3" >> $INSTALL/etc/retroarch.cfg
     echo "xmb_menu_color_theme = 9" >> $INSTALL/etc/retroarch.cfg
     echo "video_font_size = 10" >> $INSTALL/etc/retroarch.cfg
@@ -230,24 +241,25 @@ makeinstall_target() {
     echo "xmb_shadows_enable = true" >> $INSTALL/etc/retroarch.cfg
     sed -i -e "s/input_menu_toggle_gamepad_combo = 2/input_menu_toggle_gamepad_combo = 4/" $INSTALL/etc/retroarch.cfg
     sed -i -e "s/video_smooth = false/video_smooth = true/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/video_font_path =\/usr\/share\/retroarch-assets\/xmb\/monochrome\/font.ttf//" $INSTALL/etc/retroarch.cfg  
-  # Switch
-  elif [ "$PROJECT" == "Switch" ]; then
-    sed -i -e "s/menu_mouse_enable = false/menu_mouse_enable = true/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/input_driver = udev/input_driver = x/" $INSTALL/etc/retroarch.cfg
-    
-    sed -i -e "s/# video_hard_sync = false/video_hard_sync = true/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/# video_crop_overscan = true/video_crop_overscan = false/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/# menu_show_online_updater = true/menu_show_online_updater = false/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/# input_joypad_driver =/input_joypad_driver = linuxraw/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/video_threaded = true/video_threaded = false/" $INSTALL/etc/retroarch.cfg
-    sed -i -e "s/input_autodetect_enable = true/input_autodetect_enable = false/"  $INSTALL/etc/retroarch.cfg
-    
-    echo "xmb_shadows_enable = true" >> $INSTALL/etc/retroarch.cfg
-
-    # Joypad Autoconfig doesn't work as Joy-Cons VID and PID are both 0
-    cat $PROJECT_DIR/Switch/joypad/Joy-Con_Rails.cfg >> $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/video_font_path =\/usr\/share\/retroarch-assets\/xmb\/monochrome\/font.ttf//" $INSTALL/etc/retroarch.cfg
   fi
+
+  # GPICase
+  if [ "$PROJECT" == "RPi" ] && [ "$DEVICE" == "GPICase" ]; then
+    echo "audio_device = \"default:CARD=ALSA\"" >> $INSTALL/etc/retroarch.cfg
+    echo "menu_timedate_enable = false" >> $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/input_menu_toggle_gamepad_combo = 2/input_menu_toggle_gamepad_combo = 4/" $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/menu_driver = \"xmb\"/menu_driver = \"rgui\"/" $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/video_threaded = true/video_threaded = false/" $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/# aspect_ratio_index = 19/aspect_ratio_index = 21/" $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/# audio_out_rate = 48000/audio_out_rate = 44100/" $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/# video_font_size = 32/video_font_size = 16/" $INSTALL/etc/retroarch.cfg
+    sed -i -e "s/# video_scale_integer = false/video_scale_integer = true/" $INSTALL/etc/retroarch.cfg
+  fi
+
+  # System overlay
+  mkdir -p $INSTALL/usr/share/retroarch-system
+    touch $INSTALL/usr/share/retroarch-system/.placeholder
 }
 
 post_install() {  
@@ -261,6 +273,8 @@ post_install() {
   enable_service tmp-database.mount
   enable_service tmp-assets.mount
   enable_service tmp-shaders.mount
+  enable_service tmp-overlays.mount
+  enable_service tmp-system.mount
 }
 
 post_makeinstall_target() {

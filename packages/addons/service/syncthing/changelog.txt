@@ -1,14 +1,36 @@
+<<<<<<< HEAD
 104
 - Update to version 0.14.29
 
 103
 - Update to version 0.14.3
 
+=======
+108
+- Update to 1.2.0
+
+107
+- Update to 1.0.0
+
+106
+- Update to 0.14.49
+
+105
+- Update to 0.14.29
+
+103
+- Update to 0.14.3
+
+>>>>>>> lakka-master
 102
 - Enable automatic upgrades
 
 101
+<<<<<<< HEAD
 - Update to version 0.12.24
+=======
+- Update to 0.12.24
+>>>>>>> lakka-master
 
 100
 - Initial addon

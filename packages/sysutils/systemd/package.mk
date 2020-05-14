@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="systemd"
-PKG_VERSION="239"
-PKG_SHA256="8a11b1b07d620f4c06a16e95bba4dd2a97e90efdf2a5ba47ed0a935085787a14"
+PKG_VERSION="242"
+PKG_SHA256="ec22be9a5dd94c9640e6348ed8391d1499af8ca2c2f01109198a414cff6c6cba"
 PKG_LICENSE="LGPL2.1+"
 PKG_SITE="http://www.freedesktop.org/wiki/Software/systemd"
 PKG_URL="https://github.com/systemd/systemd/archive/v$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain libcap kmod util-linux entropy"
+PKG_DEPENDS_TARGET="toolchain libcap kmod util-linux entropy libidn2"
 PKG_LONGDESC="A system and session manager for Linux, compatible with SysV and LSB init scripts."
 
 PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
@@ -31,17 +31,19 @@ PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Dlibcryptsetup=false \
                        -Dlibcurl=false \
                        -Dlibidn=false \
-                       -Dlibidn2=false \
+                       -Dlibidn2=true \
                        -Dlibiptc=false \
                        -Dqrencode=false \
                        -Dgcrypt=false \
                        -Dgnutls=false \
+                       -Dopenssl=false \
                        -Delfutils=false \
                        -Dzlib=false \
                        -Dbzip2=false \
                        -Dxz=false \
                        -Dlz4=false \
                        -Dxkbcommon=false \
+                       -Dpcre2=false \
                        -Dglib=false \
                        -Ddbus=false \
                        -Ddefault-dnssec=no \
@@ -60,7 +62,6 @@ PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Dnetworkd=false \
                        -Dtimedated=false \
                        -Dtimesyncd=true \
-                       -Dmyhostname=false \
                        -Dfirstboot=false \
                        -Drandomseed=false \
                        -Dbacklight=false \
@@ -77,105 +78,19 @@ PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Dsmack=false \
                        -Dgshadow=false \
                        -Didn=false \
+                       -Dnss-myhostname=false \
+                       -Dnss-mymachines=false \
+                       -Dnss-resolve=false \
                        -Dnss-systemd=false \
                        -Dman=false \
                        -Dhtml=false \
                        -Dbashcompletiondir=no \
                        -Dzshcompletiondir=no \
-                       -Dkill-path=/usr/bin/kill \
                        -Dkmod-path=/usr/bin/kmod \
                        -Dmount-path=/usr/bin/mount \
-                       -Dumount-path=/usr/bin/umount"
-
-create_meson_conf() {
-  local endian root properties
-  case "$1" in
-    target|init)    endian="little"
-                    root="$SYSROOT_PREFIX/usr"
-                    ;;
-    host|bootstrap) endian="big"
-                    root="$TOOLCHAIN"
-                    ;;
-  esac
-
-  properties="PKG_MESON_PROPERTIES_${1^^}"
-
-  cat > $2 <<EOF
-[binaries]
-c = '$CC'
-cpp = '$CXX'
-ar = '$AR'
-strip = '$STRIP'
-pkgconfig = '$PKG_CONFIG'
-llvm-config = '$SYSROOT_PREFIX/usr/bin/llvm-config-host'
-
-[host_machine]
-system = 'linux'
-cpu_family = '$TARGET_ARCH'
-cpu = '$TARGET_SUBARCH'
-endian = '$endian'
-
-[properties]
-root = '$root'
-$(python -c "import os; print('c_args = {}'.format([x for x in os.getenv('CFLAGS').split()]))")
-$(python -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
-${!properties}
-EOF
-}
-
-# unset all PKG_* vars apart from those exported by setup_toolchain, then set default values
-reset_pkg_vars() {
-  local vars var
-
-  for var in ${!PKG_*}; do
-    if [ "${var}" = "PKG_CONFIG" ] || \
-       [ "${var}" = "PKG_CONFIG_PATH" ] || \
-       [ "${var}" = "PKG_CONFIG_LIBDIR" ] || \
-       [ "${var}" = "PKG_CONFIG_SYSROOT_DIR" ] || \
-       [ "${var}" = "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" ] || \
-       [ "${var}" = "PKG_CONFIG_ALLOW_SYSTEM_LIBS" ]; then
-       continue
-    fi
-    vars+="${var} "
-  done
-  [ -n "${vars}" ] && unset -v ${vars}
-
-  PKG_VERSION="0.0invalid"
-  PKG_REV="0"
-  PKG_ARCH="any"
-  PKG_LICENSE="unknown"
-  PKG_TOOLCHAIN="auto"
-  PKG_IS_ADDON="no"
-  PKG_PYTHON_VERSION="python2.7"
-}
-
-TARGET_MESON_OPTS="--prefix=/usr \
-                   --bindir=/usr/bin \
-                   --sbindir=/usr/sbin \
-                   --sysconfdir=/etc \
-                   --libdir=/usr/lib \
-                   --libexecdir=/usr/lib \
-                   --localstatedir=/var \
-                   --buildtype=plain"
-
-configure_target() {
-  PKG_MESON_SCRIPT="$PKG_BUILD/meson.build"
-  MESON_CONF="$PKG_BUILD/meson.conf"
-  create_meson_conf $TARGET $MESON_CONF
-  echo "Executing (target): meson $TARGET_MESON_OPTS --cross-file=$MESON_CONF $PKG_MESON_OPTS_TARGET $(dirname $PKG_MESON_SCRIPT)" | tr -s " "
-  CC="$HOST_CC" CXX="$HOST_CXX" meson $TARGET_MESON_OPTS --cross-file=$MESON_CONF $PKG_MESON_OPTS_TARGET $(dirname $PKG_MESON_SCRIPT)
-}
-
-make_target() {
-  NINJA_OPTS="$NINJA_OPTS -j$CONCURRENCY_MAKE_LEVEL"
-  cd $PKG_BUILD/.$TARGET_NAME
-  ninja $NINJA_OPTS $PKG_MAKE_OPTS_TARGET
-}
-
-makeinstall_target() {
-  DESTDIR=$SYSROOT_PREFIX ninja install $PKG_MAKEINSTALL_OPTS_TARGET
-  DESTDIR=$INSTALL ninja install $PKG_MAKEINSTALL_OPTS_TARGET
-}
+                       -Dumount-path=/usr/bin/umount \
+                       -Ddebug-tty=$DEBUG_TTY \
+                       -Dversion-tag=${PKG_VERSION}"
 
 pre_configure_target() {
   export CFLAGS="$CFLAGS -fno-schedule-insns -fno-schedule-insns2 -Wno-format-truncation"
@@ -214,9 +129,6 @@ post_makeinstall_target() {
   safe_remove $INSTALL/usr/lib/udev/rules.d/71-seat.rules
   safe_remove $INSTALL/usr/lib/udev/rules.d/73-seat-late.rules
 
-  # remove debug-shell.service, we install our own
-  safe_remove $INSTALL/usr/lib/systemd/system/debug-shell.service
-
   # remove getty units, we dont want a console
   safe_remove $INSTALL/usr/lib/systemd/system/autovt@.service
   safe_remove $INSTALL/usr/lib/systemd/system/console-getty.service
@@ -244,8 +156,19 @@ post_makeinstall_target() {
   safe_remove $INSTALL/usr/bin/systemd-nspawn
   safe_remove $INSTALL/usr/lib/systemd/system/systemd-nspawn@.service
 
-  # remove genetators/catalog
-  safe_remove $INSTALL/usr/lib/systemd/system-generators
+  # remove unneeded generators
+  for gen in $INSTALL/usr/lib/systemd/system-generators/*; do
+    case "$gen" in
+      */systemd-debug-generator)
+        # keep it
+        ;;
+      *)
+        safe_remove "$gen"
+        ;;
+    esac
+  done
+
+  # remove catalog
   safe_remove $INSTALL/usr/lib/systemd/catalog
 
   # remove partition
@@ -273,7 +196,12 @@ post_makeinstall_target() {
   sed -e "s,^.*HandleLidSwitch=.*$,HandleLidSwitch=ignore,g" -i $INSTALL/etc/systemd/logind.conf
   sed -e "s,^.*HandlePowerKey=.*$,HandlePowerKey=ignore,g" -i $INSTALL/etc/systemd/logind.conf
 
-  # replace systemd-machine-id-setup with ours
+  # fix ordering cycle for overlay mounts
+  if [ "$DISTRO" = "Lakka" ]; then
+    sed -e "s/local-fs\.target/tmp.mount var.mount/" -i $INSTALL/usr/lib/systemd/system/systemd-tmpfiles-setup.service
+  fi
+
+# replace systemd-machine-id-setup with ours
   safe_remove $INSTALL/usr/lib/systemd/systemd-machine-id-commit
   safe_remove $INSTALL/usr/lib/systemd/system/systemd-machine-id-commit.service
   safe_remove $INSTALL/usr/lib/systemd/system/*.target.wants/systemd-machine-id-commit.service
@@ -285,6 +213,12 @@ post_makeinstall_target() {
 
   mkdir -p $INSTALL/usr/sbin
   cp $PKG_DIR/scripts/kernel-overlays-setup $INSTALL/usr/sbin
+  cp $PKG_DIR/scripts/network-base-setup $INSTALL/usr/sbin
+  cp $PKG_DIR/scripts/systemd-timesyncd-setup $INSTALL/usr/sbin
+
+  # /etc/resolv.conf and /etc/hosts must be writable
+  ln -sf /run/libreelec/resolv.conf $INSTALL/etc/resolv.conf
+  ln -sf /run/libreelec/hosts $INSTALL/etc/hosts
 
   # provide 'halt', 'shutdown', 'reboot' & co.
   ln -sf /usr/bin/systemctl $INSTALL/usr/sbin/halt
@@ -307,6 +241,7 @@ post_makeinstall_target() {
   ln -sf /storage/.config/logind.conf.d $INSTALL/etc/systemd/logind.conf.d
   safe_remove $INSTALL/etc/systemd/sleep.conf.d
   ln -sf /storage/.config/sleep.conf.d $INSTALL/etc/systemd/sleep.conf.d
+  ln -sf /storage/.config/timesyncd.conf.d $INSTALL/etc/systemd/timesyncd.conf.d
   safe_remove $INSTALL/etc/sysctl.d
   ln -sf /storage/.config/sysctl.d $INSTALL/etc/sysctl.d
   safe_remove $INSTALL/etc/tmpfiles.d
@@ -345,4 +280,7 @@ post_install() {
   enable_service usercache.service
   enable_service kernel-overlays.service
   enable_service hwdb.service
+  enable_service network-base.service
+  enable_service systemd-timesyncd.service
+  enable_service systemd-timesyncd-setup.service
 }

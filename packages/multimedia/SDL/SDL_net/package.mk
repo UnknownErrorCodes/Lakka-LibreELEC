@@ -16,13 +16,19 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+<<<<<<<< HEAD:packages/multimedia/SDL/SDL_net/package.mk
 PKG_NAME="SDL_net"
 PKG_VERSION="1.2.8"
+========
+PKG_NAME="brcmfmac_sdio-firmware-aml"
+PKG_VERSION="0.1"
+>>>>>>>> lakka-master:packages/linux-firmware/brcmfmac_sdio-firmware-aml/package.mk
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.libsdl.org/"
 PKG_URL="https://www.libsdl.org/projects/SDL_net/release/$PKG_NAME-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain yasm:host alsa-lib systemd dbus SDL_net:host"
+PKG_DEPENDS_TARGET="toolchain yasm:host alsa-lib systemd dbus SDL SDL_net:host"
+PKG_DEPENDS_HOST="toolchain yasm:host alsa-lib systemd dbus SDL"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="This is a small sample cross-platform networking library, with a sample chat client and server application."
 PKG_LONGDESC="This is a small sample cross-platform networking library, with a sample chat client and server application."

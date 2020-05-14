@@ -19,31 +19,43 @@
 ################################################################################
 
 PKG_NAME="play"
-PKG_VERSION="95ce2c3"
-PKG_REV="1"
+PKG_VERSION="094253a"
 PKG_ARCH="any"
-PKG_SITE="https://github.com/libretro/Play-"
-PKG_GIT_URL="$PKG_SITE"
-PKG_DEPENDS_TARGET="toolchain curl"
+PKG_LICENSE="GPLv2"
+PKG_SITE="https://github.com/lakkatv/Play-" # TODO: use upstream when the libretro PR is merged
+PKG_URL="$PKG_SITE.git"
+PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Play! - PlayStation 2 Emulator"
+PKG_SHORTDESC="Play! is an attempt to create a PlayStation 2 emulator for Windows, macOS, UNIX, Android & iOS platforms."
+PKG_LONGDESC="Play! is an attempt to create a PlayStation 2 emulator for Windows, macOS, UNIX, Android & iOS platforms."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_USE_CMAKE="yes"
+PKG_TOOLCHAIN="cmake"
 
-PKG_CMAKE_SCRIPT="$PKG_BUILD/CMakeLists.txt"
+if [ "$OPENGL_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGL glu"
+fi
 
-PKG_CMAKE_OPTS_TARGET="-DBUILD_LIBRETRO_CORE=ON -DBUILD_PLAY=OFF -DBUILD_TESTS=OFF -DUSE_GLES=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_C_COMPILER=${CC}"
+if [ "$OPENGLES_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGLES"
+fi
 
-pre_patch() {
-  cd $PKG_BUILD/deps/Dependencies/boost-cmake
-  wget "https://github.com/jpd002/boost-cmake/releases/download/v1.68.0/boost_1_68_0.tar.xz" --no-check-certificate
-}
+PKG_CMAKE_OPTS_TARGET="-DBUILD_LIBRETRO_CORE=yes \
+                       -DBUILD_PLAY=off \
+                       -DBUILD_TESTS=no \
+                       -DENABLE_AMAZON_S3=no \
+                       -DCMAKE_BUILD_TYPE=Release \
+                       --target play_libretro"
+
+if [ "$OPENGL_SUPPORT" = no -a "$OPENGLES_SUPPORT" = yes ]; then
+  PKG_CMAKE_OPTS_TARGET="-DUSE_GLES=yes $PKG_CMAKE_OPTS_TARGET"
+fi
 
 pre_make_target() {
   find $PKG_BUILD -name flags.make -exec sed -i "s:isystem :I:g" \{} \;
+  find $PKG_BUILD -name build.ninja -exec sed -i "s:isystem :I:g" \{} \;
 }
 
 makeinstall_target() {

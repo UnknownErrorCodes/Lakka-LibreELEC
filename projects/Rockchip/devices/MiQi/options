@@ -6,17 +6,16 @@
   # generated code.
     case $TARGET_ARCH in
       arm)
-        TARGET_CPU="cortex-a17"
         TARGET_FLOAT="hard"
+        TARGET_CPU="cortex-a17"
         TARGET_FPU="neon-vfpv4"
-        TARGET_FEATURES="32bit neon"
+        TARGET_FEATURES="32bit"
+        KERNEL_TOOLCHAIN="arm-linux-gnueabihf"
         ;;
     esac
 
   # Configuration for u-boot
-    UBOOT_CONFIG="miqi-rk3288_config"
-    UBOOT_SOC="rk3288"
-    UBOOT_DTB="rk3288-miqi.dtb"
+    UBOOT_SYSTEM="rk3288"
 
   # Kernel target
     KERNEL_TARGET="zImage"
@@ -28,14 +27,5 @@
     MALI_FAMILY="t760"
     MALI_REVISION="r1p0"
 
-  # kernel image name
-    KERNEL_NAME="zImage"
-
-  # additional drivers to install:
-  # for a list of additinoal drivers see packages/linux-drivers
-  # Space separated list is supported,
-  # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
-    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS rfkill"
-
   # kernel serial console
-    EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000"
+    EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000 console=tty0"

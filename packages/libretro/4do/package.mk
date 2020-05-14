@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="4do"
-PKG_VERSION="e2ba1eb"
+PKG_VERSION="b6ad4bc"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="LGPL with additional notes"
 PKG_SITE="https://github.com/libretro/4do-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

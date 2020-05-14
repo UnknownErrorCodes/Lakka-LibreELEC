@@ -1,5 +1,5 @@
 102
-- Add strings.po header
+- Avoid LibreELEC Settings addon crash
 
 101
 - Fix log errors

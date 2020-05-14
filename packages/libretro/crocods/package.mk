@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="crocods"
-PKG_VERSION="a7d1098"
+PKG_VERSION="fbb619f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/libretro-crocods"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

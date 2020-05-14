@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="cap32"
-PKG_VERSION="bd8f9dc"
+PKG_VERSION="2828e7d"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/libretro-cap32"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

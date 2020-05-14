@@ -1,38 +1,20 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="Python3"
-PKG_VERSION="3.6.2"
-PKG_SHA256="9229773be41ed144370f47f0f626a1579931f5a390f1e8e3853174d52edd64a9"
-PKG_ARCH="any"
+# When changing PKG_VERSION remember to sync PKG_PYTHON_VERSION!
+PKG_VERSION="3.7.3"
+PKG_SHA256="da60b54064d4cfcd9c26576f6df2690e62085123826cff2e667e72a91952d318"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.python.org/"
 PKG_URL="http://www.python.org/ftp/python/$PKG_VERSION/${PKG_NAME::-1}-$PKG_VERSION.tar.xz"
-PKG_SOURCE_DIR="${PKG_NAME::-1}-$PKG_VERSION*"
-PKG_DEPENDS_HOST="zlib:host bzip2:host"
-PKG_DEPENDS_TARGET="toolchain sqlite expat zlib bzip2 openssl Python3:host readline"
-PKG_SECTION="lang"
-PKG_SHORTDESC="python3: The Python3 programming language"
-PKG_LONGDESC="Python3 is an interpreted object-oriented programming language, and is often compared with Tcl, Perl, Java or Scheme."
+PKG_DEPENDS_HOST="zlib:host bzip2:host libffi:host util-linux:host"
+PKG_DEPENDS_TARGET="toolchain sqlite expat zlib bzip2 openssl Python3:host readline ncurses"
+PKG_LONGDESC="Python3 is an interpreted object-oriented programming language."
 
-PKG_PYTHON_VERSION=python3.6
+PKG_PYTHON_VERSION=python3.7
 
-PKG_AUTORECONF="yes"
+PKG_TOOLCHAIN="autotools"
 
 PKG_CONFIGURE_OPTS_HOST="ac_cv_prog_HAS_HG=/bin/false
                          ac_cv_prog_SVNVERSION=/bin/false
@@ -58,7 +40,7 @@ PKG_CONFIGURE_OPTS_HOST="ac_cv_prog_HAS_HG=/bin/false
                          --with-libmpdec=none
                          --with-doc-strings
                          --without-pymalloc
-                         --without-ensurepi
+                         --without-ensurepip
 "
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_prog_HAS_HG=/bin/false
@@ -85,7 +67,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_prog_HAS_HG=/bin/false
                            --enable-zlib
                            --disable-xz
                            --disable-tk
-                           --disable-curses
+                           --enable-curses
                            --disable-pydoc
                            --disable-test-modules
                            --disable-lib2to3
@@ -114,10 +96,14 @@ post_makeinstall_host() {
   rm -f $TOOLCHAIN/bin/pyvenv
   rm -f $TOOLCHAIN/bin/pydoc*
 
+  rm -fr $PKG_BUILD/.$HOST_NAME/build/temp.*
+
   cp $PKG_BUILD/Tools/scripts/reindent.py $TOOLCHAIN/lib/$PKG_PYTHON_VERSION
 }
 
 post_makeinstall_target() {
+  rm -fr $PKG_BUILD/.$TARGET_NAME/build/temp.*
+
   PKG_INSTALL_PATH_LIB=$INSTALL/usr/lib/$PKG_PYTHON_VERSION
 
   for dir in config compiler sysconfigdata lib-dynload/sysconfigdata lib2to3 test; do

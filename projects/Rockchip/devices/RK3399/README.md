@@ -1,18 +1,11 @@
-# Experimental project for RK3399 boards
+# RK3399
 
-**Supported boards**
-
-* ROCKPro64
-* Rock960
-* Odroid N1
-
-**Known issues**
-
-* The ethernet MAC address is currently random at each boot - this causes the IP address to be different too each time the board is rebooted.
-  * While it should, the MAC address is not passed from u-boot (for network boot) to Linux, this causes the board to have one IP address when u-boot runs then another when Linux runs
+This is a SoC device for RK3399
 
 **Build**
 
-* `PROJECT=Rockchip DEVICE=RK3399 BOARD=ROCKPro64 ARCH=arm make image`
-* `PROJECT=Rockchip DEVICE=RK3399 BOARD=ROCK960 ARCH=arm make image`
-* `PROJECT=Rockchip DEVICE=RK3399 BOARD=OdroidN1 ARCH=arm make image`
+* `PROJECT=Rockchip DEVICE=RK3399 ARCH=arm UBOOT_SYSTEM=khadas-edge make image`
+* `PROJECT=Rockchip DEVICE=RK3399 ARCH=arm UBOOT_SYSTEM=rock960 make image`
+* `PROJECT=Rockchip DEVICE=RK3399 ARCH=arm UBOOT_SYSTEM=rock-pi-4 make image`
+* `PROJECT=Rockchip DEVICE=RK3399 ARCH=arm UBOOT_SYSTEM=rockpro64 make image`
+* `PROJECT=Rockchip DEVICE=RK3399 ARCH=arm UBOOT_SYSTEM=sapphire make image`

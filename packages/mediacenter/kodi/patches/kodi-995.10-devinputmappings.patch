@@ -1,15 +1,8 @@
-diff -Naur kodi-15.0-2f34a0c/system/Lircmap.xml kodi-15.0-2f34a0c.patch/system/Lircmap.xml
---- kodi-15.0-2f34a0c/system/Lircmap.xml	2015-07-22 10:07:05.000000000 +0200
-+++ kodi-15.0-2f34a0c.patch/system/Lircmap.xml	2015-07-28 10:47:41.202213181 +0200
-@@ -493,6 +493,7 @@
- 		<teletext>KEY_TEXT</teletext>
- 		<clear>KEY_DELETE</clear>
- 	</remote>
-+
- 	<remote device="mediacenter">
- 		<pause>pause</pause>
- 		<stop>stop</stop>
-@@ -544,50 +545,93 @@
+diff --git a/system/Lircmap.xml b/system/Lircmap.xml
+index ec7c6e0e6a..05dc05521e 100644
+--- a/system/Lircmap.xml
++++ b/system/Lircmap.xml
+@@ -548,50 +548,85 @@
  		<up>KEY_UP</up>
  		<down>KEY_DOWN</down>
  		<select>KEY_OK</select>
@@ -33,28 +26,23 @@ diff -Naur kodi-15.0-2f34a0c/system/Lircmap.xml kodi-15.0-2f34a0c.patch/system/L
  		<stop>KEY_STOP</stop>
 +		<stop>KEY_STOPCD</stop>
  		<forward>KEY_FASTFORWARD</forward>
-+		<forward>KEY_FFORWARD</forward>
 +		<forward>KEY_FORWARD</forward>
  		<reverse>KEY_REWIND</reverse>
  		<volumeplus>KEY_VOLUMEUP</volumeplus>
-+		<volumeplus>KEY_VOLUP</volumeplus>
  		<volumeminus>KEY_VOLUMEDOWN</volumeminus>
-+		<volumeminus>KEY_VOLDOWN</volumeminus>
  		<pageplus>KEY_CHANNELUP</pageplus>
-+		<pageplus>KEY_CHUP</pageplus>
 +		<pageplus>KEY_PAGEUP</pageplus>
  		<pageminus>KEY_CHANNELDOWN</pageminus>
-+		<pageminus>KEY_CHDOWN</pageminus>
 +		<pageminus>KEY_PAGEDOWN</pageminus>
  		<skipplus>KEY_NEXT</skipplus>
 +		<skipplus>KEY_NEXTSONG</skipplus>
  		<skipminus>KEY_PREVIOUS</skipminus>
 +		<skipminus>KEY_PREVIOUSSONG</skipminus>
- 		<title>KEY_EPG</title>
+ 		<guide>KEY_EPG</guide>
+ 		<title>KEY_TITLE</title>
 +		<title>KEY_TV2</title>
 +		<title>KEY_CONTEXT_MENU</title>
  		<subtitle>KEY_SUBTITLE</subtitle>
-+		<subtitle>KEY_TITLE</subtitle>
  		<language>KEY_LANGUAGE</language>
  		<info>KEY_INFO</info>
 +		<info>KEY_PROPS</info>
@@ -97,10 +85,7 @@ diff -Naur kodi-15.0-2f34a0c/system/Lircmap.xml kodi-15.0-2f34a0c.patch/system/L
  		<nine>KEY_NUMERIC_9</nine>
 +		<zero>KEY_0</zero>
  		<zero>KEY_NUMERIC_0</zero>
-+		<star>KEY_STAR</star>
 +		<star>KEY_KPASTERISK</star>
  		<star>KEY_NUMERIC_STAR</star>
-+		<hash>KEY_POUND</hash>
  		<hash>KEY_NUMERIC_POUND</hash>
  		<red>KEY_RED</red>
- 		<green>KEY_GREEN</green>

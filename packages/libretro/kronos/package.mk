@@ -19,24 +19,37 @@
 ################################################################################
 
 PKG_NAME="kronos"
-PKG_VERSION="ac74c14"
-PKG_GIT_BRANCH="kronos"
+PKG_VERSION="b5fbe1d"
+PKG_GIT_CLONE_BRANCH="kronos"
 PKG_REV="1"
-PKG_ARCH="any"
+PKG_ARCH="i386 x86_64"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/yabause"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Port of Kronos to libretro."
 PKG_LONGDESC="Port of Kronos to libretro."
+PKG_TOOLCHAIN="make"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+if [ "$OPENGL_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGL"
+fi
+
+if [ "$OPENGLES_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGLES"
+fi
+
 make_target() {
-  make -C yabause/src/libretro platform=arm64
+  if [ "$ARCH" == "aarch64" ]; then
+    make -C yabause/src/libretro platform=arm64
+  else
+    make -C yabause/src/libretro
+  fi
 }
 
 makeinstall_target() {

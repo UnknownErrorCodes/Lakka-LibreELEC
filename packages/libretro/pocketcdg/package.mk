@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="pocketcdg"
-PKG_VERSION="f483400"
+PKG_VERSION="9705f33"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/libretro-pocketcdg"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

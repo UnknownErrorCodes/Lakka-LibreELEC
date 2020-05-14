@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="2048"
-PKG_VERSION="bc05dc6"
+PKG_VERSION="b2b08a8"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/libretro-2048"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

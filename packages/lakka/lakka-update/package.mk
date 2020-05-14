@@ -27,6 +27,7 @@ PKG_PRIORITY="optional"
 PKG_SECTION="lakka"
 PKG_SHORTDESC="Shell script to wget the latest update"
 PKG_LONGDESC="Shell script to wget the latest update"
+PKG_TOOLCHAIN="manual"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"

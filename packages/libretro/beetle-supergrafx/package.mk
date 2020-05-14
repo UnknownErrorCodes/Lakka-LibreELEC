@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="beetle-supergrafx"
-PKG_VERSION="a124da8"
+PKG_VERSION="326eaaf"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-supergrafx-libretro"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

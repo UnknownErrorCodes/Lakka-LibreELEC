@@ -19,35 +19,44 @@
 ################################################################################
 
 PKG_NAME="desmume"
-PKG_VERSION="5f6f1ee"
+PKG_VERSION="e8cf461"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/desmume"
-PKG_GIT_URL="$PKG_SITE"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_URL="$PKG_SITE.git"
+PKG_DEPENDS_TARGET="toolchain libpcap"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="libretro wrapper for desmume NDS emulator."
 PKG_LONGDESC="libretro wrapper for desmume NDS emulator."
+PKG_TOOLCHAIN="manual"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$OPENGL" == "no" -o "$OPENGL" == "" ]; then
-  OGL=0
-else
-  OGL=1
+if [ "$OPENGL_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGL"
+fi
+
+if [ "$OPENGLES_SUPPORT" = yes ]; then
+  PKG_DEPENDS_TARGET+=" $OPENGLES"
 fi
 
 post_patch() {
   # enable OGL back if present
-  if [ "$OPENGL" != "no" -a "$OPENGL" != "" ]; then
+  if [ "$OPENGL_SUPPORT" = yes ]; then
     patch --reverse -d `echo "$PKG_BUILD" | cut -f1 -d\ ` -p1 < $PKG_DIR/patches/desmume-002-disable-ogl.patch
   fi
 }
 
 make_target() {
+  if [ "$OPENGL_SUPPORT" = yes ]; then
+    OGL=1
+  else
+    OGL=0
+  fi
+
   if [ "$ARCH" == "arm" ]; then
     make -C desmume/src/frontend/libretro platform=armv LDFLAGS="$LDFLAGS -lpthread" HAVE_GL=$OGL DESMUME_OPENGL=$OGL DESMUME_OPENGL_CORE=$OGL # DESMUME_JIT_ARM=1
   elif [ "$ARCH" == "aarch64" ]; then

@@ -18,13 +18,18 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
+<<<<<<<< HEAD:packages/libretro/hatari/package.mk
 PKG_NAME="hatari"
-PKG_VERSION="42388bb"
+PKG_VERSION="3fdaff4"
 PKG_REV="1"
+========
+PKG_NAME="nspr"
+PKG_VERSION="4.13"
+>>>>>>>> lakka-master:packages/addons/addon-depends/nspr/package.mk
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/hatari"
-PKG_GIT_URL="$PKG_SITE"
+PKG_URL="$PKG_SITE.git"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -39,12 +44,18 @@ configure_target() {
   :
 }
 
+<<<<<<<< HEAD:packages/libretro/hatari/package.mk
 make_target() {
   if [ "$ARCH" == "arm" ]; then
     CFLAGS="$CFLAGS -DNO_ASM -DARM -D__arm__ -DARM_ASM -DNOSSE -DARM_HARDFP"
   fi
   make -C .. -f Makefile.libretro
 }
+========
+PKG_CONFIGURE_OPTS_TARGET="--with-pthreads $TARGET_USE_64"
+PKG_MAKE_OPTS_TARGET="NSINSTALL=$TOOLCHAIN/bin/nsinstall"
+PKG_MAKEINSTALL_OPTS_TARGET="NSINSTALL=$TOOLCHAIN/bin/nsinstall"
+>>>>>>>> lakka-master:packages/addons/addon-depends/nspr/package.mk
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro

@@ -9,16 +9,18 @@
 # prebuild target binarys to provide
 /target/
 
-# scripts for getting and packing source packages
-/tools/mkpkg/*
-!/tools/mkpkg/mkpkg_*
-
 # mkpkg temp
 mkpkg-temp
+
+# options
+/.libreelec
 
 # private working directory
 /.work/
 .vscode/ipch/
+
+# dedicated filesystem
+/lost+found/
 
 # symlinks...
 /sources
@@ -32,3 +34,4 @@ mkpkg-temp
 
 # crap
 .DS_Store
+.directory
